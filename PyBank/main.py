@@ -58,7 +58,7 @@ print(f"Greatest Decrease in Profits: {monthMinProfit} (${minProfit})")
 
 ##### Write to file
 # Path to directory to save file
-pathToTextFile = '//128.143.15.11/markX/DataBootCamp/HomeWork/03-Python/python-challenge/PyBank/test.txt'
+pathToTextFile = '//128.143.15.11/markX/DataBootCamp/HomeWork/03-Python/python-challenge/PyBank/FinancialAnalysis.txt'
 fileOut = open(pathToTextFile,"w") 
 
 fileOut.write("Financial Analysis\n")

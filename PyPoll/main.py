@@ -8,7 +8,7 @@ pathToCSV = '//128.143.15.11/markX/DataBootCamp/HomeWork/03-Python/Instructions/
 
 election_csv = os.path.join(pathToCSV, 'Resources', 'election_data.csv')
 
-##### Open budget csv file
+##### Open election csv file
 with open(election_csv) as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=",")    # use reader to create object
     csv_header = next(csv_file)      # Read the header row first (this will also make file go to next row)
@@ -16,105 +16,70 @@ with open(election_csv) as csv_file:
     county = []     # make empty list so that I can append in loop
     candidate = []  # make empty list so that I can append in loop
 
-    i = 0
+    i = 0 # this was used simply to evaluate a small portion of the file
 ##### For loop to grab month and profit data
     for iRow in csv_reader:
         voterID.append(iRow[0])
         county.append(iRow[1])
         candidate.append(iRow[2])
         i = i+1
-        if i == 1500:
-            break
+        #if i == 1500: # set temp breakpoint  to exit w/o going through entire file
+        #    break
 
-##### Get number of months, sum of profits and mean of profits (needed to import statistics)
+##### Get number of total number of voters, names of candidates
 totalVoters = len(voterID)
+candidateNames = set(candidate) # get unique candidate names
+canList = list(candidateNames)  # convert unique candidates into a list
 
-candidateNames = set(candidate)
-
-canList = list(candidateNames)
-
-canList2 = []
+canList2 = [] # This was necessar b/c the order of candidates in the canList changed each time I ran the script. Why?
 canVotes = []
 
 for iCan in canList:
-    canList2.append(iCan)
-    canVotes.append(candidate.count(iCan))
+    canList2.append(iCan) # now, canList2 can be used as a stable represenation of candidate order, and corresponding vote number order
+    canVotes.append(candidate.count(iCan)) # this collects the number of votes per candidate, in the same order as the candidates in canList2
+
+sortedVotes = sorted(canVotes, reverse = True) # sorts vote %age in descending order (i.e. winner to loser)
 
 percentVotes = []
 for iCan in canVotes:
-    percentVotes.append(round(100*iCan/sum(canVotes),2))
+    percentVotes.append(round(100*iCan/sum(canVotes),0)) # convert # of votes into % of votes
 
-[sorted(percentVotes).index(theCans) for theCans in percentVotes]
+sortedVotePercent = sorted(percentVotes, reverse = True) # sorts vote %age in descending order (i.e. winner to loser) (check out https://www.programiz.com/python-programming/methods/list/sort)
 
-sortedVotes = sorted(percentVotes)
-print(f"sorted votes = {sortedVotes}")
+winnerToLoser = []
+for iCans in sortedVotePercent:
+    winnerToLoser.append(canList2[percentVotes.index(iCans)]) # appends candidate to winnerToLoser, in the order of vote %, biggest to smallest
 
-for iCans in sortedVotes:
-    theCan = canList2[percentVotes.index(iCans)]
-    print(theCan)
-
-#print(percentVotes)
-
-biggestPercentIndex = percentVotes.index(max(percentVotes))
-biggestWinner = canList2[biggestPercentIndex]
-
-#print("Election Results")
-#print("-" *30)
-#print(f"Total Votes: {totalVoters}")
-#print("-" *30)
-
-
-#print(f"Total Profit: ${netProfitLoss}")
-#print(f"Average Change: ${meanProfitChange}")
-#print(f"Greatest Increase in Profits: {monthMaxProfit} (${maxProfit})")
-#print(f"Greatest Decrease in Profits: {monthMinProfit} (${minProfit})")
-
-
-
-quit()
-
-netProfitLoss = sum(profitLoss)
-meanProfitLoss = statistics.mean(profitLoss)
-
-##### Calculate monthly change in profit (i.e. profit_i+1  -  profit_i)
-profitChange = []
-for index, elem in enumerate(profitLoss):  # handy emnumerate function (nice way to keep track of index...and therefore the value in the next row)
-    if (index+1 < len(profitLoss) and index >= 0):
-        currentProfit = profitLoss[index]
-        nextProfit = profitLoss[index+1]
-        profitChange.append(nextProfit - currentProfit)
-
-##### calculate mean, month-to-month change
-meanProfitChange = round(statistics.mean(profitChange),2)
-
-##### Find indices of max and min profit, so that I can get corresponding month
-maxProfitIndex = profitChange.index(max(profitChange))
-maxProfit = profitChange[maxProfitIndex]
-monthMaxProfit = months[maxProfitIndex+1]
-minProfitIndex = profitChange.index(min(profitChange))
-minProfit = profitChange[minProfitIndex]
-monthMinProfit = months[minProfitIndex+1]
-
-##### Print the output
-print("Financial Analysis")
+###### Print Results
+print("Election Results")
 print("-" *30)
-print(f"Total Months: {numMonths}")
-print(f"Total Profit: ${netProfitLoss}")
-print(f"Average Change: ${meanProfitChange}")
-print(f"Greatest Increase in Profits: {monthMaxProfit} (${maxProfit})")
-print(f"Greatest Decrease in Profits: {monthMinProfit} (${minProfit})")
+print(f"Total Votes: {totalVoters}")
+print("-" *30)
+
+for index, elem in enumerate(winnerToLoser):
+    print(f"{winnerToLoser[index]}: {'{0:.3f}'.format(sortedVotePercent[index])}% ({sortedVotes[index]})")
+
+print("-" *30)
+print(f"Winner: {winnerToLoser[0]}")
+print("-" *30)
 
 
 ##### Write to file
 # Path to directory to save file
-pathToTextFile = '//128.143.15.11/markX/DataBootCamp/HomeWork/03-Python/python-challenge/PyBank/test.txt'
+pathToTextFile = '//128.143.15.11/markX/DataBootCamp/HomeWork/03-Python/python-challenge/PyPoll/PollResults.txt'
 fileOut = open(pathToTextFile,"w") 
 
-fileOut.write("Financial Analysis\n")
+fileOut.write("Election Results\n")
 fileOut.write("-" *30)
 fileOut.write("\n")
-fileOut.write(f"Total Months: {numMonths}\n")
-fileOut.write(f"Total Profit: ${netProfitLoss}\n")
-fileOut.write(f"Average Change: ${meanProfitChange}\n")
-fileOut.write(f"Greatest Increase in Profits: {monthMaxProfit} (${maxProfit})\n")
-fileOut.write(f"Greatest Decrease in Profits: {monthMinProfit} (${minProfit})\n")
+fileOut.write(f"Total Votes: {totalVoters}\n")
+fileOut.write("-" *30)
+fileOut.write("\n")
+
+for index, elem in enumerate(winnerToLoser):
+    fileOut.write(f"{winnerToLoser[index]}: {'{0:.3f}'.format(sortedVotePercent[index])}% ({sortedVotes[index]})\n")
+
+fileOut.write("-" *30)
+fileOut.write("\n")
+fileOut.write(f"Winner: {winnerToLoser[0]}\n")
+fileOut.write("-" *30)
