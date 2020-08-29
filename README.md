@@ -20,11 +20,11 @@ Much of my code is commented so one can find my strategy and workflow in the scr
 
 * In summary, here are the useful functions/tools I found:
 
-  * **enumerate**
+  * **enumerate**:  https://book.pythontips.com/en/latest/enumerate.html 
 
-  * **break**
+  * **break**:  https://www.tutorialspoint.com/python/python_break_statement.htm 
 
-  * **'{0:.3f}'.format**
+  * **'{0:.3f}'.format**:  https://pyformat.info/ 
 
   * **fileOut.write("-" *30)**
 
